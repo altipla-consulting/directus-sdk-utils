@@ -64,6 +64,7 @@ export function createOperationsHandler<Options>(fn: OperationHandler<Options>) 
 export type Meta = Record<string, any> & {
   event: string
   collection: string
+  key?: string
   keys: string[]
 }
 export type HookContext<T = unknown> = AccountableContext & {
