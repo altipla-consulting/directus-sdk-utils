@@ -1,7 +1,7 @@
 import type { ItemsService } from '@directus/api/services/items'
 import type { FilesService } from '@directus/api/services/files'
 import type { FoldersService } from '@directus/api/services/folders'
-import type { TranslationsService } from '@directus/api/services/translations'
+import type { TranslationsService as DirectusTranslationsService } from '@directus/api/services/translations'
 import { createError } from '@directus/errors'
 import type { ApiExtensionContext, EndpointExtensionContext, HookConfig as DirectusHookConfig, OperationContext, OperationHandler } from '@directus/extensions'
 import type { Accountability, Item } from '@directus/types'
@@ -152,9 +152,24 @@ export function readHookPayload<T extends z.AnyZodObject>(context: HookContext, 
   return schema.passthrough().parse(context._payload) as z.infer<T>
 }
 
+export type TranslationsService = Omit<DirectusTranslationsService, 'translationKeyExists'> & {
+  translationKeyExists: (key: string, language: string) => Promise<boolean>
+}
 export async function getTranslationsService(context: EndpointExtensionContext) {
   let { TranslationsService } = context.services
-  return new TranslationsService({ schema: await context.getSchema() }) as TranslationsService
+  let { _translationKeyExists, ...translationsService } = new TranslationsService({ schema: await context.getSchema() })
+
+  async function checkTranslationKey(key: string, language: string) {
+    let t = await translationsService.readByQuery({
+      filter: { _and: [{ key: { _eq: key } }, { language: { _eq: language } }] },
+    })
+    return t.length > 0
+  }
+
+  return {
+    ...translationsService,
+    checkTranslationKey,
+  } as TranslationsService
 }
 
 export async function getFilesService(context: BasicContext) {
