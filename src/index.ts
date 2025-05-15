@@ -64,7 +64,6 @@ export function createOperationsHandler<Options>(fn: OperationHandler<Options>) 
 export type Meta = Record<string, any> & {
   event: string
   collection: string
-  key?: string
   keys: string[]
 }
 export type HookContext<T = unknown> = AccountableContext & {
@@ -86,10 +85,14 @@ export function defineHook(fn: HookConfig): DirectusHookConfig {
       filter: (event: string, handler: FilterHandler) => {
         register.filter(event, async (payload, meta, context) => {
           try {
+            let keys = meta.keys ?? []
+            if (meta.key) {
+              keys.push(meta.key)
+            }
             return await handler(
               {
                 ...meta,
-                keys: meta.keys ?? [],
+                keys,
               } as Meta,
               {
                 ...hookContext,
