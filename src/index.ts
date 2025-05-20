@@ -52,10 +52,6 @@ function logError(logger: BasicContext['logger'], err: unknown) {
   throw err
 }
 
-export function logInfo(logger: BasicContext['logger'], message: string) {
-  logger.info(message)
-}
-
 export function createOperationsHandler<Options>(fn: OperationHandler<Options>) {
   return async function (params: Options, context: OperationContext) {
     try {
