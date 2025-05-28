@@ -169,15 +169,15 @@ export async function createFilesService(context: BasicContext) {
 
 export type FoldersService<T extends object> = DirectusFoldersService & ItemsService<T, string>
 export async function createFoldersService<T extends object>({ services, getSchema, database }: BasicContext): Promise<FoldersService<T>> {
-  let { FoldersService } = services.FoldersService
+  let { FoldersService } = services
   const cls: typeof ItemsService<T> = FoldersService
 
   return merge(
-    FoldersService,
     new cls('directus_folders', {
       schema: await getSchema(),
       knex: database,
     }),
+    FoldersService,
   )
 }
 
