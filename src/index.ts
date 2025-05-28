@@ -167,7 +167,7 @@ export async function createFilesService(context: BasicContext) {
   return new FilesService({ schema: await context.getSchema() }) as FilesService
 }
 
-export type FoldersService<T extends object> = DirectusFoldersService & ItemsService<T, string>
+export type FoldersService<T extends object> = ItemsService<T, string> & DirectusFoldersService
 export async function createFoldersService<T extends object>({ services, getSchema, database }: BasicContext): Promise<FoldersService<T>> {
   let { FoldersService } = services
   const cls: typeof ItemsService<T> = FoldersService
