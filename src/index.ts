@@ -145,11 +145,11 @@ export function readTriggerKeys(context: OperationContext) {
 
 type PayloadSchema = z.AnyZodObject | z.ZodUnion<[z.AnyZodObject, ...z.AnyZodObject[]]>
 export function readTriggerPayload<T extends PayloadSchema>(context: OperationContext, schema: T) {
-  if (schema.constructor.name === 'ZodObject' && schema._def && schema._def.typeName === 'ZodObject') {
-    return (schema as z.AnyZodObject).passthrough().parse((context.data as any).$trigger.payload) as z.infer<T>
-  }
   if (schema instanceof z.ZodUnion && schema._def && schema._def.typeName === 'ZodUnion') {
     return z.union(schema.options.map((option) => option.passthrough()) as any).parse((context.data as any).$trigger.payload) as z.infer<T>
+  }
+  if (schema.constructor.name === 'ZodObject' && schema._def && schema._def.typeName === 'ZodObject') {
+    return (schema as z.AnyZodObject).passthrough().parse((context.data as any).$trigger.payload) as z.infer<T>
   }
   throw new Error(`Unhandled schema type: ${schema.constructor.name}. Expected ZodObject-like or ZodUnion.`)
 }
