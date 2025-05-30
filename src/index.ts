@@ -146,7 +146,15 @@ export function readTriggerKeys(context: OperationContext) {
 type PayloadSchema = z.AnyZodObject | z.ZodUnion<[z.AnyZodObject, ...z.AnyZodObject[]]>
 export function readTriggerPayload<T extends PayloadSchema>(context: OperationContext, schema: T) {
   if (schema instanceof z.ZodUnion && schema._def && schema._def.typeName === 'ZodUnion') {
-    return z.union(schema.options.map((option) => option.passthrough()) as any).parse((context.data as any).$trigger.payload) as z.infer<T>
+    const passthroughOptions = schema.options.map((option) => {
+      if (option._def.typeName === 'ZodObject' ||
+          option instanceof z.ZodObject ||
+          'shape' in option) {
+        return option.passthrough()
+      }
+      return option
+    })
+    return z.union(passthroughOptions as any).parse((context.data as any).$trigger.payload) as z.infer<T>
   }
   if (schema.constructor.name === 'ZodObject' && schema._def && schema._def.typeName === 'ZodObject') {
     return (schema as z.AnyZodObject).passthrough().parse((context.data as any).$trigger.payload) as z.infer<T>
@@ -154,13 +162,26 @@ export function readTriggerPayload<T extends PayloadSchema>(context: OperationCo
   throw new Error(`Unhandled schema type: ${schema.constructor.name}. Expected ZodObject-like or ZodUnion.`)
 }
 export function readHookPayload<T extends PayloadSchema>(context: HookContext, schema: T) {
-  if (schema instanceof z.ZodUnion && schema._def && schema._def.typeName === 'ZodUnion') {
-    return z.union(schema.options.map((option) => option.passthrough()) as any).parse(context._payload) as z.infer<T>
-  }
-  if (schema.constructor.name === 'ZodObject' && schema._def && schema._def.typeName === 'ZodObject') {
-    return (schema as z.AnyZodObject).passthrough().parse(context._payload) as z.infer<T>
-  }
-  throw new Error(`Unhandled schema type: ${schema.constructor.name}. Expected ZodObject-like or ZodUnion.`)
+  if (schema._def.typeName === 'ZodObject' ||
+    (schema as any)._def.typeName === 'ZodObject' ||
+    'shape' in schema) {
+  return (schema as z.AnyZodObject).passthrough().parse(context._payload) as z.infer<T>
+}
+
+if (schema._def.typeName === 'ZodUnion' || schema instanceof z.ZodUnion) {
+  // Mapear cada opción del union para que use passthrough solo si es un objeto
+  const passthroughOptions = schema.options.map((option) => {
+    if (option._def.typeName === 'ZodObject' ||
+        option instanceof z.ZodObject ||
+        'shape' in option) {
+      return option.passthrough()
+    }
+    return option
+  })
+
+  return z.union(passthroughOptions as any).parse(context._payload) as z.infer<T>
+}
+  throw new Error(`Unhandled schema type: ${(schema as z.AnyZodObject)._def.typeName}. Expected ZodObject-like or ZodUnion.`)
 }
 
 export async function createTranslationsService(context: EndpointExtensionContext) {
