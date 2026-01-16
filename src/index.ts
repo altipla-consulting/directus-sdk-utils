@@ -4,7 +4,7 @@ import type { TranslationsService } from '@directus/api/services/translations'
 import type { NotificationsService } from '@directus/api/services/notifications'
 import { createError } from '@directus/errors'
 import type { ApiExtensionContext, EndpointExtensionContext, HookConfig as DirectusHookConfig, OperationContext, OperationHandler } from '@directus/extensions'
-import type { Accountability, Item } from '@directus/types'
+import type { AbstractService, Accountability, Item } from '@directus/types'
 import { z } from 'zod'
 import type { UsersService } from '@directus/api/services/users'
 
@@ -14,7 +14,7 @@ export type AccountableContext = ApiExtensionContext & {
 }
 
 export async function createItemsService<T extends object>({ services, getSchema, database }: BasicContext, table: string) {
-  const cls: typeof ItemsService<T> = services.ItemsService
+  const cls = services.ItemsService as typeof ItemsService<T>
   return new cls(table, {
     schema: await getSchema(),
     knex: database,
@@ -22,7 +22,7 @@ export async function createItemsService<T extends object>({ services, getSchema
 }
 
 export async function createAccountableItemsService<T extends object>({ services, accountability, getSchema, database }: AccountableContext, table: string) {
-  const cls: typeof ItemsService<T> = services.ItemsService
+  const cls = services.ItemsService as typeof ItemsService<T>
   return new cls(table, {
     schema: await getSchema(),
     knex: database,
@@ -31,7 +31,7 @@ export async function createAccountableItemsService<T extends object>({ services
 }
 
 export async function createOperationItemsService<T extends object>({ services, getSchema, database }: BasicContext, table: string, operation: string) {
-  const cls: typeof ItemsService<T> = services.ItemsService
+  const cls = services.ItemsService as typeof ItemsService<T>
   return new cls(table, {
     schema: await getSchema(),
     knex: database,
@@ -102,7 +102,7 @@ export function defineHook(fn: HookConfig): DirectusHookConfig {
                 ...hookContext,
                 ...context,
                 _payload: payload,
-              }
+              },
             )
           } catch (err: unknown) {
             logError(hookContext.logger, err)
@@ -126,7 +126,7 @@ export function defineHook(fn: HookConfig): DirectusHookConfig {
                   ...hookContext,
                   ...context,
                   _payload: meta.payload,
-                }
+                },
               )
             } catch (err: unknown) {
               logError(hookContext.logger, err)
@@ -173,9 +173,12 @@ export async function createTranslationsService(context: EndpointExtensionContex
   }
 }
 
-export async function createFilesService(context: BasicContext) {
-  let { FilesService } = context.services
-  return new FilesService({ schema: await context.getSchema() }) as FilesService
+export async function createFilesService({ services, getSchema, database }: BasicContext) {
+  let { FilesService } = services
+  return new FilesService({
+    schema: await getSchema(),
+    knex: database,
+  }) as FilesService
 }
 
 type Folder = {
@@ -183,15 +186,21 @@ type Folder = {
   name: string
   parent?: string | null
 }
-export type FoldersService<T extends Item> = ItemsService<T>
-export async function createFoldersService<T extends Folder = Folder>(context: BasicContext) {
-  let { FoldersService } = context.services
-  return new FoldersService({ schema: await context.getSchema() }) as FoldersService<T>
+export type FoldersService<T extends Item> = AbstractService<T>
+export async function createFoldersService<T extends Folder = Folder>({ services, getSchema, database }: BasicContext) {
+  let { FoldersService } = services
+  return new FoldersService({
+    schema: await getSchema(),
+    knex: database,
+  }) as FoldersService<T>
 }
 
-export async function createNotificationsService(context: BasicContext) {
-  let { NotificationsService } = context.services
-  return new NotificationsService({ schema: await context.getSchema() }) as NotificationsService
+export async function createNotificationsService({ services, getSchema, database }: BasicContext) {
+  let { NotificationsService } = services
+  return new NotificationsService({
+    schema: await getSchema(),
+    knex: database,
+  }) as NotificationsService
 }
 
 type Ext = {
@@ -202,7 +211,19 @@ type Ext = {
 }
 export const FailedValidationError = createError<Ext>('FAILED_VALIDATION', 'invalid field', 400)
 
-export async function createUsersService(context: BasicContext) {
-  let { UsersService } = context.services
-  return new UsersService({ schema: await context.getSchema() }) as UsersService
+export async function createUsersService({ services, getSchema, database }: BasicContext) {
+  let { UsersService } = services
+  return new UsersService({
+    schema: await getSchema(),
+    knex: database,
+  }) as UsersService
+}
+
+export type SettingsService = AbstractService
+export async function createSettingsService({ services, getSchema, database }: BasicContext) {
+  let { SettingsService } = services
+  return new SettingsService({
+    schema: await getSchema(),
+    knex: database,
+  }) as SettingsService
 }
