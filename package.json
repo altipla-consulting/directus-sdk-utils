@@ -2,8 +2,8 @@
   "name": "@altipla/directus-sdk-utils",
   "version": "0.7.0",
   "description": "Helpers to build Directus extensions.",
-  "main": "dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "dist/index.mjs",
+  "types": "./dist/index.d.mts",
   "type": "module",
   "scripts": {
     "build": "tsdown src/index.ts",
