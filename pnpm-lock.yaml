@@ -8,9 +8,18 @@ importers:
 
   .:
     dependencies:
+      '@directus/api':
+        specifier: ^33.0.0
+        version: 33.0.0(@types/node@25.0.9)(@unhead/vue@1.11.20(vue@3.5.24(typescript@5.9.3)))(encoding@0.1.13)(jiti@2.4.2)(lodash@4.17.21)(pinia@2.3.1(typescript@5.9.3)(vue@3.5.24(typescript@5.9.3)))(terser@5.46.0)(typescript@5.9.3)(vue@3.5.24(typescript@5.9.3))(yaml@2.8.2)
       '@directus/errors':
         specifier: ^2.1.0
         version: 2.1.0
+      '@directus/extensions':
+        specifier: ^3.0.16
+        version: 3.0.16(deep-diff@1.0.2)(express@4.21.2)(graphql@16.12.0)(knex@3.1.0(mysql2@3.15.3)(pg@8.16.3)(sqlite3@5.1.7)(tedious@18.6.1))(mysql2@3.15.3)(nodemailer@7.0.11)(openapi3-ts@4.5.0)(pg@8.16.3)(pino@9.7.0)(sharp@0.34.5)(sqlite3@5.1.7)(tedious@18.6.1)(vue@3.5.24(typescript@5.9.3))(ws@8.18.3)
+      '@directus/types':
+        specifier: ^14.0.0
+        version: 14.0.0(deep-diff@1.0.2)(express@4.21.2)(graphql@16.12.0)(knex@3.1.0(mysql2@3.15.3)(pg@8.16.3)(sqlite3@5.1.7)(tedious@18.6.1))(mysql2@3.15.3)(nodemailer@7.0.11)(openapi3-ts@4.5.0)(pg@8.16.3)(pino@9.7.0)(sharp@0.34.5)(sqlite3@5.1.7)(tedious@18.6.1)(vue@3.5.24(typescript@5.9.3))(ws@8.18.3)
       zod:
         specifier: ^3.25.76
         version: 3.25.76
@@ -18,15 +27,6 @@ importers:
       '@altipla/eslint-config-ts':
         specifier: ^1.0.5
         version: 1.0.5(eslint@9.39.2(jiti@2.4.2))(typescript@5.9.3)
-      '@directus/api':
-        specifier: ^33.0.0
-        version: 33.0.0(@types/node@25.0.9)(@unhead/vue@1.11.20(vue@3.5.24(typescript@5.9.3)))(encoding@0.1.13)(jiti@2.4.2)(lodash@4.17.21)(pinia@2.3.1(typescript@5.9.3)(vue@3.5.24(typescript@5.9.3)))(terser@5.46.0)(typescript@5.9.3)(vue@3.5.24(typescript@5.9.3))(yaml@2.8.2)
-      '@directus/extensions':
-        specifier: ^3.0.16
-        version: 3.0.16(deep-diff@1.0.2)(express@4.21.2)(graphql@16.12.0)(knex@3.1.0(mysql2@3.15.3)(pg@8.16.3)(sqlite3@5.1.7)(tedious@18.6.1))(mysql2@3.15.3)(nodemailer@7.0.11)(openapi3-ts@4.5.0)(pg@8.16.3)(pino@9.7.0)(sharp@0.34.5)(sqlite3@5.1.7)(tedious@18.6.1)(vue@3.5.24(typescript@5.9.3))(ws@8.18.3)
-      '@directus/types':
-        specifier: ^14.0.0
-        version: 14.0.0(deep-diff@1.0.2)(express@4.21.2)(graphql@16.12.0)(knex@3.1.0(mysql2@3.15.3)(pg@8.16.3)(sqlite3@5.1.7)(tedious@18.6.1))(mysql2@3.15.3)(nodemailer@7.0.11)(openapi3-ts@4.5.0)(pg@8.16.3)(pino@9.7.0)(sharp@0.34.5)(sqlite3@5.1.7)(tedious@18.6.1)(vue@3.5.24(typescript@5.9.3))(ws@8.18.3)
       '@types/node':
         specifier: ^25.0.9
         version: 25.0.9
